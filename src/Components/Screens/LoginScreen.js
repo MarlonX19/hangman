@@ -1,11 +1,32 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, TextInput, Image, TouchableOpacity, StatusBar } from 'react-native';
+import firebase from 'firebase';
 
 
 export default class LoginScreen extends Component {
       static navigationOptions= {
           header: null,
       }
+
+  constructor(props){
+    super(props)
+
+    this.state = {
+      username: '',
+      password: ''
+
+    }
+  }
+
+
+  _login = (name, pass) => {
+    firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+      // Handle Errors here.
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      // ...
+    });
+  }
 
   render() {
     return (
@@ -23,6 +44,7 @@ export default class LoginScreen extends Component {
               style={{ fontSize: 20, fontWeight: 'bold' }}
               placeholder={'Username'}
               placeholderTextColor={'gray'}
+              onChangeText={(text) => this.setState({ username: text })}
             />
           </View>
           <View style={styles.individualInputs}>
@@ -30,12 +52,13 @@ export default class LoginScreen extends Component {
               style={{ fontSize: 20, fontWeight: 'bold' }}
               placeholder={'Password'}
               placeholderTextColor={'gray'}
+              onChangeText={(text) => this.setState({ password: text }) }
             />
           </View>
         </View>
 
         <TouchableOpacity
-          onPress={() => false}
+          onPress={() => this._login(this.state.name, this.state.password)}
           style={{flex: 1}}
         >
           <View style={styles.buttonView}>

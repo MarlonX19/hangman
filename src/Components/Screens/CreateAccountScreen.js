@@ -1,11 +1,38 @@
 import React, {Component} from 'react';
 import { Platform, StyleSheet, Text, View, TextInput, TouchableOpacity, StatusBar } from 'react-native';
+import firebase from 'firebase';
 
 
 export default class CreateAccountScreen extends Component {
   static navigationOptions = {
     header: null,
   }
+
+  constructor(props){
+    super(props)
+
+    this.state = {
+      username: '',
+      password: '',
+      email: ''
+
+    }
+  }
+
+
+  _signUp = (email, password) => {
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+    .then( response => {
+      alert("Conta criada com sucesso!")
+    })
+    .catch(function(error) {
+      // Handle Errors here.
+     alert(error.code);
+      alert(error.message);
+      // ...
+    });
+  }
+
 
   render() {
     return (
@@ -24,6 +51,7 @@ export default class CreateAccountScreen extends Component {
               style={{ fontSize: 20, fontWeight: 'bold' }}
               placeholder={'Name'}
               placeholderTextColor={'gray'}
+              onChangeText={(text) => this.setState({ username: text })}
             />
           </View>
           <View style={styles.individualInputs}>
@@ -31,6 +59,7 @@ export default class CreateAccountScreen extends Component {
               style={{ fontSize: 20, fontWeight: 'bold' }}
               placeholder={'E-mail'}
               placeholderTextColor={'gray'}
+              onChangeText={(text) => this.setState({ email: text }) }
             />
           </View>
           <View style={styles.individualInputs}>
@@ -38,6 +67,7 @@ export default class CreateAccountScreen extends Component {
               style={{ fontSize: 20, fontWeight: 'bold' }}
               placeholder={'Password'}
               placeholderTextColor={'gray'}
+              onChangeText={(text) => this.setState({ password: text }) }
             />
           </View>
           <View style={styles.individualInputs}>
@@ -51,7 +81,7 @@ export default class CreateAccountScreen extends Component {
 
         <View style={styles.buttonView}>
           <TouchableOpacity
-          onPress={() => false}
+          onPress={() => this._signUp(this.state.email, this.state.password)}
           style={{ flex: 1 }}
           >
           <View style={styles.button}>
