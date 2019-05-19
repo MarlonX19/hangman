@@ -1,26 +1,22 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, TextInput, Image, TouchableOpacity, StatusBar } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Image, TouchableOpacity, StatusBar, Alert } from 'react-native';
 import firebase from 'firebase';
+import { connect } from 'react-redux';
+import { modificaEmail, modificaSenha } from '../../actions/AutenticacaoAction';
 
 
-export default class LoginScreen extends Component {
-      static navigationOptions= {
-          header: null,
-      }
-
-  constructor(props){
-    super(props)
-
-    this.state = {
-      username: '',
-      password: ''
-
-    }
+class LoginScreen extends Component {
+  static navigationOptions = {
+    header: null,
   }
 
-
-  _login = (name, pass) => {
-    firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+  _signIn = (email, password) => {
+    firebase.auth().signInWithEmailAndPassword(email, password)
+    .then( response => {
+      // Handle success here.
+      Alert.alert("Login efetuado!")
+    })
+    .catch( error => {
       // Handle Errors here.
       var errorCode = error.code;
       var errorMessage = error.message;
@@ -28,11 +24,12 @@ export default class LoginScreen extends Component {
     });
   }
 
+  
   render() {
     return (
       <View style={styles.container}>
        <StatusBar
-          barStyle="light-content"
+          barStyle="dark-content"
           backgroundColor="lightgray"
         />
         <View style={styles.imgView}>
@@ -42,9 +39,10 @@ export default class LoginScreen extends Component {
           <View style={styles.individualInputs}>
             <TextInput
               style={{ fontSize: 20, fontWeight: 'bold' }}
-              placeholder={'Username'}
+              placeholder={'Email'}
               placeholderTextColor={'gray'}
-              onChangeText={(text) => this.setState({ username: text })}
+              onChangeText={(text) => this.props.modificaEmail(text)}
+              value={this.props.email}
             />
           </View>
           <View style={styles.individualInputs}>
@@ -52,13 +50,15 @@ export default class LoginScreen extends Component {
               style={{ fontSize: 20, fontWeight: 'bold' }}
               placeholder={'Password'}
               placeholderTextColor={'gray'}
-              onChangeText={(text) => this.setState({ password: text }) }
+              onChangeText={(text) => this.props.modificaSenha(text) }
+              secureTextEntry
+              value={this.props.password}
             />
           </View>
         </View>
 
         <TouchableOpacity
-          onPress={() => this._login(this.state.name, this.state.password)}
+          onPress={() => this._signIn(this.state.email, this.state.password)}
           style={{flex: 1}}
         >
           <View style={styles.buttonView}>
@@ -99,13 +99,25 @@ export default class LoginScreen extends Component {
         </View>
       </View>
     );
+
   }
+  
 }
+
+const mapStateToProps = state => (
+  {
+    nome: state.AutenticacaoReducer.nome,
+    email: state.AutenticacaoReducer.email,
+    password: state.AutenticacaoReducer.senha
+  }
+)
+
+export default connect(mapStateToProps, { modificaEmail, modificaSenha })(LoginScreen)
 
 
 const styles = StyleSheet.create({
   container: {
-      height: 680,
+      flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: '#fff'

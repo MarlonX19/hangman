@@ -1,20 +1,23 @@
 import React, {Component} from 'react';
-import { Platform, StyleSheet, Text, View, TextInput, TouchableOpacity, StatusBar } from 'react-native';
+import { Platform, StyleSheet, Text, View, TextInput, TouchableOpacity, StatusBar, Alert } from 'react-native';
 import firebase from 'firebase';
+import { connect } from 'react-redux';
+import { modificaEmail, modificaSenha, modificaNome, cadastraUsuario } from '../../actions/AutenticacaoAction';
 
 
-export default class CreateAccountScreen extends Component {
+class CreateAccountScreen extends Component {
   static navigationOptions = {
     header: null,
   }
 
-  constructor(props){
+  constructor(props) {
     super(props)
 
     this.state = {
       username: '',
+      email: '',
       password: '',
-      email: ''
+      confirmPassword: ''
 
     }
   }
@@ -23,14 +26,21 @@ export default class CreateAccountScreen extends Component {
   _signUp = (email, password) => {
     firebase.auth().createUserWithEmailAndPassword(email, password)
     .then( response => {
-      alert("Conta criada com sucesso!")
+      Alert.alert("Conta criada com sucesso!")
     })
-    .catch(function(error) {
-      // Handle Errors here.
+    .catch( error => {
      alert(error.code);
       alert(error.message);
-      // ...
+    
     });
+  }
+
+  _cadastraUsuario(){
+    const nome = this.props.nome;
+    const email = this.props.email;
+    const senha = this.props.senha;
+
+    this.props.cadastraUsuario({ nome, email, senha })
   }
 
 
@@ -38,7 +48,7 @@ export default class CreateAccountScreen extends Component {
     return (
       <View style={styles.container}>
         <StatusBar
-          barStyle="light-content"
+          barStyle="dark-content"
           backgroundColor="lightgray"
         />
         <View style={styles.top}>
@@ -51,7 +61,8 @@ export default class CreateAccountScreen extends Component {
               style={{ fontSize: 20, fontWeight: 'bold' }}
               placeholder={'Name'}
               placeholderTextColor={'gray'}
-              onChangeText={(text) => this.setState({ username: text })}
+              onChangeText={(text) => this.props.modificaNome(text) }
+              value={this.props.nome}
             />
           </View>
           <View style={styles.individualInputs}>
@@ -59,7 +70,8 @@ export default class CreateAccountScreen extends Component {
               style={{ fontSize: 20, fontWeight: 'bold' }}
               placeholder={'E-mail'}
               placeholderTextColor={'gray'}
-              onChangeText={(text) => this.setState({ email: text }) }
+              onChangeText={(text) => this.props.modificaEmail(text) }
+              value={this.props.email}
             />
           </View>
           <View style={styles.individualInputs}>
@@ -67,7 +79,9 @@ export default class CreateAccountScreen extends Component {
               style={{ fontSize: 20, fontWeight: 'bold' }}
               placeholder={'Password'}
               placeholderTextColor={'gray'}
-              onChangeText={(text) => this.setState({ password: text }) }
+              onChangeText={(text) => this.props.modificaSenha(text) }
+              secureTextEntry
+              value={this.props.senha}
             />
           </View>
           <View style={styles.individualInputs}>
@@ -75,13 +89,16 @@ export default class CreateAccountScreen extends Component {
               style={{ fontSize: 20, fontWeight: 'bold' }}
               placeholder={'Confirm Password'}
               placeholderTextColor={'gray'}
+              onChangeText={(text) => this.props.modificaSenha(text) }
+              secureTextEntry
+              value={this.props.senha}
             />
           </View>
         </View>
 
         <View style={styles.buttonView}>
           <TouchableOpacity
-          onPress={() => this._signUp(this.state.email, this.state.password)}
+          onPress={() => this._cadastraUsuario()}
           style={{ flex: 1 }}
           >
           <View style={styles.button}>
@@ -104,6 +121,18 @@ export default class CreateAccountScreen extends Component {
     );
   }
 }
+
+const mapStateToProps = state => (
+  {
+    nome: state.AutenticacaoReducer.nome,
+    email: state.AutenticacaoReducer.email,
+    senha: state.AutenticacaoReducer.senha,
+
+  }
+);
+
+
+export default connect(mapStateToProps, { modificaEmail, modificaSenha, modificaNome, cadastraUsuario })(CreateAccountScreen);
 
 const styles = StyleSheet.create({
   container: {
