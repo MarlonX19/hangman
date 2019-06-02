@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { StyleSheet, Text, View, TextInput, Image, TouchableOpacity, StatusBar, Alert } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Image, TouchableOpacity, StatusBar, Alert, Button } from 'react-native';
 import firebase from 'firebase';
 import { connect } from 'react-redux';
 import { modificaEmail, modificaSenha } from '../../actions/AutenticacaoAction';
@@ -14,12 +14,12 @@ class LoginScreen extends Component {
     firebase.auth().signInWithEmailAndPassword(email, password)
     .then( response => {
       // Handle success here.
-      Alert.alert("Login efetuado!")
+      this.props.navigation.replace('Home')
     })
     .catch( error => {
       // Handle Errors here.
-      var errorCode = error.code;
-      var errorMessage = error.message;
+      console.log(error.code);
+      console.log(error.message);
       // ...
     });
   }
@@ -58,7 +58,7 @@ class LoginScreen extends Component {
         </View>
 
         <TouchableOpacity
-          onPress={() => this._signIn(this.state.email, this.state.password)}
+          onPress={() => this._signIn(this.props.email, this.props.password)}
           style={{flex: 1}}
         >
           <View style={styles.buttonView}>
