@@ -57,3 +57,5 @@ buck-out/
 
 # Ignoring firebase connection config
 /src/Config/
+
+*.txt
