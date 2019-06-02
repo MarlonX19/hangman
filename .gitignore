@@ -56,6 +56,5 @@ buck-out/
 *.jsbundle
 
 # Ignoring firebase connection config
-/src/Config/
+/src/Config/**
 
-*.txt
