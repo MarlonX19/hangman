@@ -26,21 +26,21 @@ export const modificaNome = (text) => {
 }
 
 export const cadastraUsuario = ({ nome, email, senha }) => {
-    return dispachar => {
+    return dispatch => {
         firebase.auth().createUserWithEmailAndPassword(email, senha)
             .then(response => {
-                cadastraUsuarioSucesso(dispachar)
+                cadastraUsuarioSucesso(dispatch)
             })
             .catch(error => {
-                cadastraUsuarioErro(dispachar)
+                cadastraUsuarioErro(dispatch)
             });
     }
 }
 
-const cadastraUsuarioSucesso = (dispachar) => {
-     dispachar ({ type: 'sucesso' });
+const cadastraUsuarioSucesso = (dispatch) => {
+     dispatch ({ type: 'sucesso' });
 }
 
-const cadastraUsuarioErro = (dispachar) => {
-     dispachar ({ type: 'erro' });
+const cadastraUsuarioErro = (dispatch) => {
+     dispatch ({ type: 'erro' });
 }
